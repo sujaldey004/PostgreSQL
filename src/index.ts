@@ -1,23 +1,22 @@
 import { Client } from "pg";
 
-const client = new Client({
-    connectionString:"postgresql://playwithpostgres_owner:1MejS5qTucRp@ep-small-mouse-a5dw46qt.us-east-2.aws.neon.tech/playwithpostgres?sslmode=require"
-})
+async function insertData(){
+    const client = new Client({
+        connectionString:"postgresql://playwithpostgres_owner:1MejS5qTucRp@ep-small-mouse-a5dw46qt.us-east-2.aws.neon.tech/playwithpostgres?sslmode=require"
+    });
 
-
-
-async function createUsersTable(){
-    await client.connect();
-    const result = await client.query(`
-        CREATE TABLE users(
-        id SERIAL PRIMARY KEY,
-        username VARCHAR(50) UNIQUE NOT NULL,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-        );
-    `)
-    console.log(result);
+    try{
+        await client.connect();
+        const insertQuery = "INSERT INTO users (username, email, password) VALUES ('username1', 'user1@gmail.com', 'password1234')";
+        const res = await client.query(insertQuery);
+        console.log("Insertion success : ", res);
+    }catch(err){
+        console.error("Error during insertion : ", err);
+    }finally{
+        await client.end();
+    }
 }
 
-createUsersTable();
+
+insertData();
+
